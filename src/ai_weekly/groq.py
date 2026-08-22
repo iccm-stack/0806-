@@ -39,12 +39,14 @@ class GroqClient:
             time.sleep(self.min_interval - elapsed)
         payload = {
             "model": GROQ_MODEL,
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
+            # GPT-OSS follows Groq's Harmony format most reliably when all task
+            # instructions are in the user message rather than a system prompt.
+            "messages": [{"role": "user", "content": f"{system}\n\n{user}"}],
             "temperature": temperature,
             "max_tokens": max_tokens,
+            "reasoning_effort": "low",
+            "reasoning_format": "hidden",
+            "response_format": {"type": "json_object"},
         }
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         # User-Agent is deliberately explicit: Groq is fronted by Cloudflare and

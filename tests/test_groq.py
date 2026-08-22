@@ -34,6 +34,10 @@ class GroqClientTests(unittest.TestCase):
         payload = json.loads(request.data)
         self.assertEqual(payload["model"], GROQ_MODEL)
         self.assertEqual(GROQ_MODEL, "openai/gpt-oss-120b")
+        self.assertEqual(payload["reasoning_effort"], "low")
+        self.assertEqual(payload["reasoning_format"], "hidden")
+        self.assertEqual(payload["response_format"], {"type": "json_object"})
+        self.assertEqual([message["role"] for message in payload["messages"]], ["user"])
         self.assertEqual(request.headers["User-agent"], USER_AGENT)
         self.assertEqual(request.headers["Authorization"], "Bearer test-key")
 
