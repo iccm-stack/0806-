@@ -60,7 +60,14 @@ class GroqClient:
                     result = json.loads(response.read().decode("utf-8"))
                 content = result["choices"][0]["message"]["content"]
                 return _parse_json_object(content)
-            except (urllib.error.URLError, urllib.error.HTTPError, KeyError, json.JSONDecodeError) as exc:
+            except urllib.error.HTTPError as exc:
+                detail = exc.read(2000).decode("utf-8", "replace").strip()
+                last_error = GroqError(f"HTTP {exc.code}: {detail or exc.reason}")
+                if attempt < 2 and (exc.code == 429 or exc.code >= 500):
+                    time.sleep(2**attempt)
+                    continue
+                break
+            except (urllib.error.URLError, KeyError, json.JSONDecodeError) as exc:
                 last_error = exc
                 if attempt < 2:
                     time.sleep(2**attempt)
@@ -78,4 +85,3 @@ def _parse_json_object(content: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise json.JSONDecodeError("Expected a JSON object", text, 0)
     return value
-
