@@ -46,7 +46,7 @@ def prefilter_candidates(candidates: list[Candidate], maximum: int = 45, per_sou
     return selected
 
 
-def rank_candidates(client: GroqClient, candidates: list[Candidate], batch_size: int = 10) -> list[RankedEvent]:
+def rank_candidates(client: GroqClient, candidates: list[Candidate], batch_size: int = 6) -> list[RankedEvent]:
     ranked: list[RankedEvent] = []
     for start in range(0, len(candidates), batch_size):
         batch = candidates[start : start + batch_size]
@@ -65,7 +65,7 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
 
 候選資料：
 {json.dumps(payload, ensure_ascii=False)}"""
-        response = client.complete_json(system=RANK_SYSTEM, user=prompt, max_tokens=2500)
+        response = client.complete_json(system=RANK_SYSTEM, user=prompt, max_tokens=2600)
         for item in response.get("events", []):
             try:
                 index = int(item["index"])

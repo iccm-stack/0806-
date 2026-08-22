@@ -45,7 +45,6 @@ class GroqClient:
             ],
             "temperature": temperature,
             "max_tokens": max_tokens,
-            "response_format": {"type": "json_object"},
         }
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         # User-Agent is deliberately explicit: Groq is fronted by Cloudflare and
@@ -92,7 +91,13 @@ def _parse_json_object(content: str) -> dict[str, Any]:
         text = text[first_newline + 1 :] if first_newline >= 0 else text
         if text.endswith("```"):
             text = text[:-3]
-    value = json.loads(text.strip())
+    text = text.strip()
+    if not text.startswith("{"):
+        start = text.find("{")
+        end = text.rfind("}")
+        if start >= 0 and end > start:
+            text = text[start : end + 1]
+    value = json.loads(text)
     if not isinstance(value, dict):
         raise json.JSONDecodeError("Expected a JSON object", text, 0)
     return value

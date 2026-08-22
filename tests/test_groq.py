@@ -3,7 +3,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ai_weekly.groq import GROQ_MODEL, USER_AGENT, GroqClient, GroqError
+from ai_weekly.groq import GROQ_MODEL, USER_AGENT, GroqClient, GroqError, _parse_json_object
 
 
 class _Response:
@@ -18,6 +18,9 @@ class _Response:
 
 
 class GroqClientTests(unittest.TestCase):
+    def test_parses_json_from_markdown_or_explanation(self):
+        self.assertEqual(_parse_json_object('Result:\n```json\n{"ok": true}\n```'), {"ok": True})
+
     def test_requires_environment_key(self):
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(GroqError):
