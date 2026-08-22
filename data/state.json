@@ -4,21 +4,19 @@
     {
       "period_end": "2026-08-22",
       "event_keys": [
-        "google-dataflow-genai-workflows",
-        "replit-gpt5-6-luna",
-        "midtool",
-        "skala-dft-2026",
-        "lfm25-dspark-2026",
-        "aws-bedrock-cloud-migration",
+        "lfm2.5-dspark",
+        "document-intelligence",
+        "pandora-model-routing",
         "ai4ai-bench-rsi",
-        "securing-ai-infrastructure"
+        "skala-dft-breakthrough",
+        "aws-bedrock-cloud-migration"
       ],
       "trend_names": [
-        "生成式 AI 與即時資料流深度整合",
-        "開源與中訓練資料管線的興起",
-        "AI 安全與基礎設施防護成為焦點"
+        "模型推論效能提升",
+        "多模型系統成本感知路由",
+        "遞迴自我改進基準化"
       ],
-      "one_line_summary": "本週生成式 AI 基礎設施與工具鏈突破層出不窮，從 Google Dataflow 的自適應工作流、Replit 的免代幣 GPT‑5.6 Luna、MidTool 的中訓練資料合成，到 Microsoft Skala、LiquidAI 的推論加速與 AWS Bedrock 的多代理遷移自動化，皆顯示 AI 產業正快速向高效、可擴展與安全化演進。",
+      "one_line_summary": "本週 AI 加速與自動化技術突破顯著，從 LFM2.5‑DSpark 的 3.2 倍推論加速到多模型路由與遞迴自我改進基準，再到雲遷移與量子化學計算的實務應用。",
       "report": "reports/2026/2026-08-22.md",
       "email_sent": false
     }
