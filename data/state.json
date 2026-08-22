@@ -1,5 +1,26 @@
 {
   "schema_version": 1,
-  "weeks": []
+  "weeks": [
+    {
+      "period_end": "2026-08-22",
+      "event_keys": [
+        "google-dataflow-genai-workflows",
+        "replit-gpt5-6-luna",
+        "midtool",
+        "skala-dft-2026",
+        "lfm25-dspark-2026",
+        "aws-bedrock-cloud-migration",
+        "ai4ai-bench-rsi",
+        "securing-ai-infrastructure"
+      ],
+      "trend_names": [
+        "生成式 AI 與即時資料流深度整合",
+        "開源與中訓練資料管線的興起",
+        "AI 安全與基礎設施防護成為焦點"
+      ],
+      "one_line_summary": "本週生成式 AI 基礎設施與工具鏈突破層出不窮，從 Google Dataflow 的自適應工作流、Replit 的免代幣 GPT‑5.6 Luna、MidTool 的中訓練資料合成，到 Microsoft Skala、LiquidAI 的推論加速與 AWS Bedrock 的多代理遷移自動化，皆顯示 AI 產業正快速向高效、可擴展與安全化演進。",
+      "report": "reports/2026/2026-08-22.md",
+      "email_sent": false
+    }
+  ]
 }
-
