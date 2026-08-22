@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import Counter
 from typing import Any
 
@@ -92,7 +93,7 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
     return sorted(ranked, key=lambda event: event.total_score, reverse=True)
 
 
-def select_events(ranked: list[RankedEvent], previous_keys: set[str], minimum: int = 5, maximum: int = 8) -> list[RankedEvent]:
+def select_events(ranked: list[RankedEvent], previous_keys: set[str], minimum: int = 5, maximum: int = 6) -> list[RankedEvent]:
     fresh = [event for event in ranked if event.event_key not in previous_keys]
     thresholded = [event for event in fresh if event.total_score >= 6.0]
     count = min(maximum, max(minimum, len(thresholded)))
@@ -106,11 +107,14 @@ def build_report_data(
     period_start: str,
     period_end: str,
 ) -> dict[str, Any]:
-    prompt = f"""請將本週 Top 事件製作成深度週報資料。
+    prompt = f"""請將本週 Top 事件製作成深度週報資料。events 必須依輸入順序包含每一個事件，不能省略。
 每個事件至少包含：title, source, url, confirmed_facts（陣列）, analysis, why_it_matters,
 technical_significance, business_impact, score, limitations。
-若 major_breakthrough=true，再加入 deep_dive，包含 principles, method_or_architecture,
+只對排名第一且 major_breakthrough=true 的事件加入 deep_dive，包含 principles, method_or_architecture,
 benchmarks, comparison, limitations, differing_views, next_signals。
+confirmed_facts 只能改寫輸入的 summary 或 evidence_excerpt 明確出現的資訊。
+禁止補造百分比、benchmark、產品名稱、架構元件或發布計畫；來源沒寫就明確說「原始資料未提供」。
+analysis 與 forecast 可以推論，但不得加入來源中不存在的數字，內容務必精簡。
 另產生：one_line_summary、weekly_trends（1～3 項，每項含 name/evidence/assessment）、
 week_over_week_changes、outlook_6_24_months（須標示為推測）、opportunities、risks、
 personal_actions、tools_to_try、methodology_note。
@@ -123,7 +127,67 @@ personal_actions、tools_to_try、methodology_note。
     response["period_start"] = period_start
     response["period_end"] = period_end
     response["selected_events"] = [event.to_dict() for event in events]
+    response["events"] = _ground_report_events(response.get("events", []), events)
     return response
+
+
+def _ground_report_events(drafts: list[Any], events: list[RankedEvent]) -> list[dict[str, Any]]:
+    drafts = drafts if isinstance(drafts, list) else []
+    by_url = {str(item.get("url")): item for item in drafts if isinstance(item, dict) and item.get("url")}
+    grounded: list[dict[str, Any]] = []
+    for index, event in enumerate(events):
+        draft = by_url.get(event.url)
+        if draft is None and index < len(drafts) and isinstance(drafts[index], dict):
+            draft = drafts[index]
+        draft = dict(draft or {})
+        evidence = " ".join((event.title, event.summary, event.evidence_excerpt, event.published_at))
+        facts = draft.get("confirmed_facts", [])
+        if not isinstance(facts, list):
+            facts = [facts]
+        facts = [
+            cleaned
+            for fact in facts
+            if (cleaned := _drop_unsupported_numeric_sentences(str(fact), evidence))
+        ]
+        if not facts:
+            facts = [event.summary or f"原始來源發布：{event.title}"]
+
+        grounded_event = {
+            "title": event.title,
+            "url": event.url,
+            "source": event.source,
+            "score": f"{event.total_score:.1f}/10",
+            "confirmed_facts": facts,
+        }
+        for key in ("analysis", "why_it_matters", "technical_significance", "business_impact", "limitations"):
+            value = draft.get(key, "原始資料未提供；需回查來源。")
+            grounded_event[key] = _scrub_value(value, evidence)
+        if index == 0 and event.is_major_breakthrough and isinstance(draft.get("deep_dive"), dict):
+            grounded_event["deep_dive"] = _scrub_value(draft["deep_dive"], evidence)
+        grounded.append(grounded_event)
+    return grounded
+
+
+def _scrub_value(value: Any, evidence: str) -> Any:
+    if isinstance(value, str):
+        return _drop_unsupported_numeric_sentences(value, evidence) or "原始資料未提供可驗證的量化資訊。"
+    if isinstance(value, list):
+        return [_scrub_value(item, evidence) for item in value]
+    if isinstance(value, dict):
+        return {key: _scrub_value(item, evidence) for key, item in value.items()}
+    return value
+
+
+def _drop_unsupported_numeric_sentences(text: str, evidence: str) -> str:
+    sentences = re.split(r"(?<=[。！？；;])\s*", text.strip())
+    kept: list[str] = []
+    for sentence in sentences:
+        numbers = re.findall(r"\d+(?:\.\d+)?%?", sentence)
+        if numbers and any(number not in evidence for number in numbers):
+            continue
+        if sentence:
+            kept.append(sentence)
+    return "".join(kept)
 
 
 def _fallback_event_key(candidate: Candidate) -> str:

@@ -2,7 +2,7 @@ import unittest
 from datetime import UTC, datetime
 from unittest.mock import patch
 
-from ai_weekly.analysis import prefilter_candidates, select_events
+from ai_weekly.analysis import _ground_report_events, prefilter_candidates, select_events
 from ai_weekly.collectors import collect_html_page, deduplicate_candidates
 from ai_weekly.models import Candidate, RankedEvent
 from ai_weekly.render import render_markdown
@@ -49,6 +49,19 @@ class PipelinePartsTests(unittest.TestCase):
         selected = prefilter_candidates(items, maximum=6, per_source=2)
         self.assertEqual(len(selected), 6)
         self.assertEqual({item.source for item in selected}, {"A", "B", "C"})
+
+    def test_grounding_keeps_all_events_and_drops_unsupported_numbers(self):
+        first = _event("first", 9.0)
+        first.summary = "官方宣布推出新模型。"
+        second = _event("second", 8.0)
+        grounded = _ground_report_events(
+            [{"url": first.url, "confirmed_facts": ["成本下降 35%。"], "analysis": "效能提升 2.5 倍。"}],
+            [first, second],
+        )
+        self.assertEqual(len(grounded), 2)
+        self.assertNotIn("35", str(grounded))
+        self.assertNotIn("2.5", str(grounded))
+        self.assertEqual(grounded[1]["title"], "second")
 
     def test_render_labels_fact_analysis_and_forecast(self):
         markdown = render_markdown(

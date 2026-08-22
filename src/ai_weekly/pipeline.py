@@ -22,6 +22,9 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
     since = now - timedelta(days=7)
     state_path = root / "data" / "state.json"
     state = _load_state(state_path)
+    period_start = since.date().isoformat()
+    period_end = now.date().isoformat()
+    previous_weeks = [week for week in state.get("weeks", []) if week.get("period_end") != period_end]
 
     candidates = collect_all(root / "config" / "sources.json", since)
     LOGGER.info("collected_candidates=%d", len(candidates))
@@ -34,7 +37,7 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
     ranked = rank_candidates(client, candidates)
     previous_keys = {
         key
-        for weekly in state.get("weeks", [])
+        for weekly in previous_weeks
         for key in weekly.get("event_keys", [])
     }
     selected = select_events(ranked, previous_keys)
@@ -42,9 +45,7 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
         raise RuntimeError("No new high-value events were selected")
     selected = enrich_events(selected)
 
-    period_start = since.date().isoformat()
-    period_end = now.date().isoformat()
-    report_data = build_report_data(client, selected, state.get("weeks", []), period_start, period_end)
+    report_data = build_report_data(client, selected, previous_weeks, period_start, period_end)
 
     report_relative = Path("reports") / now.strftime("%Y") / f"{now.date().isoformat()}.md"
     report_path = root / report_relative
@@ -61,7 +62,7 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
         if not mailed:
             LOGGER.warning("email_skipped reason=SMTP settings are incomplete")
 
-    state.setdefault("weeks", []).append(
+    previous_weeks.append(
         {
             "period_end": period_end,
             "event_keys": [event.event_key for event in selected],
@@ -74,7 +75,7 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
             "email_sent": mailed,
         }
     )
-    state["weeks"] = state["weeks"][-52:]
+    state["weeks"] = previous_weeks[-52:]
     state_path.parent.mkdir(parents=True, exist_ok=True)
     state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return report_path
