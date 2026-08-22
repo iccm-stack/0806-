@@ -24,7 +24,7 @@
 
 Groq API key **只**從環境變數 `GROQ_API_KEY` 讀取，不會寫入程式、設定檔或報告。
 
-- Model 固定為 `llama-3.3-70b-versatile`
+- Model 固定為 `openai/gpt-oss-120b`（Groq 官方建議的 Llama 3.3 70B 替代模型）
 - 每次 Groq HTTP request 固定帶 `User-Agent`
 - `.env` 已列入 `.gitignore`
 - GitHub Actions 使用 Repository Secrets

@@ -9,7 +9,7 @@ from typing import Any
 
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 USER_AGENT = "global-ai-weekly/0.1 (+https://github.com/iccm-stack/0806-)"
 
 

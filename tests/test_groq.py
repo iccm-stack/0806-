@@ -30,11 +30,10 @@ class GroqClientTests(unittest.TestCase):
         request = mocked_open.call_args.args[0]
         payload = json.loads(request.data)
         self.assertEqual(payload["model"], GROQ_MODEL)
-        self.assertEqual(GROQ_MODEL, "llama-3.3-70b-versatile")
+        self.assertEqual(GROQ_MODEL, "openai/gpt-oss-120b")
         self.assertEqual(request.headers["User-agent"], USER_AGENT)
         self.assertEqual(request.headers["Authorization"], "Bearer test-key")
 
 
 if __name__ == "__main__":
     unittest.main()
-
