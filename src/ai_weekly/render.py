@@ -83,7 +83,7 @@ def _render_event(index: int, event: dict[str, Any]) -> list[str]:
         ("限制與未知", "limitations"),
     ]:
         if event.get(key):
-            lines.extend(["", f"**{label}：** {event[key]}"])
+            lines.extend(["", f"**{label}：** {_stringify(event[key])}"])
     if event.get("deep_dive"):
         lines.extend(["", "#### 技術突破深度分析", ""])
         for key, value in event["deep_dive"].items():
@@ -136,4 +136,3 @@ def _stringify(value: Any) -> str:
     if isinstance(value, list):
         return "；".join(_stringify(item) for item in value)
     return str(value)
-

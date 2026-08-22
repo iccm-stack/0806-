@@ -2,7 +2,7 @@ import unittest
 from datetime import UTC, datetime
 from unittest.mock import patch
 
-from ai_weekly.analysis import _ground_report_events, prefilter_candidates, select_events
+from ai_weekly.analysis import _ground_report_events, prefilter_candidates, rank_candidates, select_events
 from ai_weekly.collectors import collect_html_page, deduplicate_candidates
 from ai_weekly.models import Candidate, RankedEvent
 from ai_weekly.render import render_markdown
@@ -26,6 +26,14 @@ def _event(key: str, score: float) -> RankedEvent:
 
 
 class PipelinePartsTests(unittest.TestCase):
+    def test_rank_normalizes_hundred_point_model_score(self):
+        class FakeClient:
+            def complete_json(self, **_kwargs):
+                return {"events": [{"index": 0, "event_key": "x", "total_score": 78, "scores": {}}]}
+
+        ranked = rank_candidates(FakeClient(), [_candidate("Model X", "https://example.com/x")])
+        self.assertEqual(ranked[0].total_score, 7.8)
+
     def test_deduplicates_canonical_url_and_title(self):
         items = [
             _candidate("New Model", "https://example.com/model"),

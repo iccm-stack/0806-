@@ -75,6 +75,8 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
                 continue
             scores = {key: _bounded_int(value) for key, value in item.get("scores", {}).items()}
             event_key = str(item.get("event_key") or _fallback_event_key(candidate))[:100]
+            raw_total = float(item.get("total_score", _weighted_score(scores)))
+            normalized_total = raw_total / 10 if raw_total > 10 else raw_total
             ranked.append(
                 RankedEvent(
                     event_key=event_key,
@@ -85,7 +87,7 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
                     category=str(item.get("category", "其他"))[:80],
                     summary=str(item.get("summary", candidate.summary))[:1200],
                     scores=scores,
-                    total_score=float(item.get("total_score", _weighted_score(scores))),
+                    total_score=max(0.0, min(10.0, normalized_total)),
                     rationale=str(item.get("rationale", ""))[:1000],
                     is_major_breakthrough=bool(item.get("is_major_breakthrough", False)),
                 )
@@ -128,6 +130,8 @@ personal_actions、tools_to_try、methodology_note。
     response["period_end"] = period_end
     response["selected_events"] = [event.to_dict() for event in events]
     response["events"] = _ground_report_events(response.get("events", []), events)
+    if not history:
+        response["week_over_week_changes"] = "首次執行，尚無歷史週報可比較。"
     return response
 
 
