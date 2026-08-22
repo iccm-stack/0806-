@@ -1,0 +1,26 @@
+{
+  "feeds": [
+    {"name": "OpenAI", "url": "https://openai.com/news/rss.xml", "tier": 1, "kind": "official"},
+    {"name": "Google DeepMind", "url": "https://deepmind.google/blog/rss.xml", "tier": 1, "kind": "official"},
+    {"name": "Microsoft Research", "url": "https://www.microsoft.com/en-us/research/feed/", "tier": 1, "kind": "official"},
+    {"name": "NVIDIA", "url": "https://blogs.nvidia.com/feed/", "tier": 1, "kind": "official"},
+    {"name": "Hugging Face", "url": "https://huggingface.co/blog/feed.xml", "tier": 1, "kind": "official"},
+    {"name": "GitHub AI", "url": "https://github.blog/ai-and-ml/feed/", "tier": 1, "kind": "official"},
+    {"name": "BAIR", "url": "https://bair.berkeley.edu/blog/feed.xml", "tier": 1, "kind": "original_research"},
+    {"name": "AWS Machine Learning", "url": "https://aws.amazon.com/blogs/machine-learning/feed/", "tier": 2, "kind": "official"},
+    {"name": "Google Cloud", "url": "https://cloudblog.withgoogle.com/products/ai-machine-learning/rss/", "tier": 2, "kind": "official"},
+    {"name": "Databricks", "url": "https://www.databricks.com/feed", "tier": 2, "kind": "official"},
+    {"name": "MIT Technology Review AI", "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed", "tier": 2, "kind": "high_quality_media"}
+  ],
+  "html_pages": [
+    {"name": "Anthropic", "url": "https://www.anthropic.com/news", "layout": "anthropic_news", "tier": 1, "kind": "official"}
+  ],
+  "arxiv": [
+    {
+      "name": "arXiv AI/ML/CL",
+      "query": "cat:cs.AI OR cat:cs.LG OR cat:cs.CL OR cat:cs.CV OR cat:cs.SE",
+      "max_results": 30,
+      "tier": 1
+    }
+  ]
+}
