@@ -18,9 +18,11 @@ class GroqError(RuntimeError):
 
 
 class GroqClient:
-    def __init__(self, api_key: str | None = None, timeout: int = 90) -> None:
+    def __init__(self, api_key: str | None = None, timeout: int = 90, min_interval: float = 40.0) -> None:
         self.api_key = api_key or os.environ.get("GROQ_API_KEY", "")
         self.timeout = timeout
+        self.min_interval = min_interval
+        self._last_completed = 0.0
         if not self.api_key:
             raise GroqError("GROQ_API_KEY environment variable is required")
 
@@ -32,6 +34,9 @@ class GroqClient:
         temperature: float = 0.1,
         max_tokens: int = 7000,
     ) -> dict[str, Any]:
+        elapsed = time.monotonic() - self._last_completed
+        if self._last_completed and elapsed < self.min_interval:
+            time.sleep(self.min_interval - elapsed)
         payload = {
             "model": GROQ_MODEL,
             "messages": [
@@ -59,12 +64,18 @@ class GroqClient:
                 with urllib.request.urlopen(request, timeout=self.timeout) as response:
                     result = json.loads(response.read().decode("utf-8"))
                 content = result["choices"][0]["message"]["content"]
+                self._last_completed = time.monotonic()
                 return _parse_json_object(content)
             except urllib.error.HTTPError as exc:
                 detail = exc.read(2000).decode("utf-8", "replace").strip()
                 last_error = GroqError(f"HTTP {exc.code}: {detail or exc.reason}")
                 if attempt < 2 and (exc.code == 429 or exc.code >= 500):
-                    time.sleep(2**attempt)
+                    retry_after = exc.headers.get("Retry-After", "")
+                    try:
+                        delay = max(float(retry_after), 10.0)
+                    except ValueError:
+                        delay = 30.0 * (attempt + 1)
+                    time.sleep(delay)
                     continue
                 break
             except (urllib.error.URLError, KeyError, json.JSONDecodeError) as exc:

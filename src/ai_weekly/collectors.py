@@ -175,7 +175,7 @@ def enrich_events(events: list[RankedEvent]) -> list[RankedEvent]:
             article = re.search(r"<article\b[^>]*>(.*?)</article>", document, re.IGNORECASE | re.DOTALL)
             content = article.group(1) if article else document
             content = re.sub(r"<(script|style|svg|nav|footer)\b.*?</\1>", " ", content, flags=re.IGNORECASE | re.DOTALL)
-            event.evidence_excerpt = _clean(content, 9000)
+            event.evidence_excerpt = _clean(content, 1200)
         except Exception as exc:
             LOGGER.warning("enrichment_failed url=%s error=%s", event.url, exc)
     return events

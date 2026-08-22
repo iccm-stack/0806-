@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from .analysis import build_report_data, rank_candidates, select_events
+from .analysis import build_report_data, prefilter_candidates, rank_candidates, select_events
 from .collectors import collect_all, enrich_events
 from .groq import GroqClient
 from .mailer import send_email
@@ -29,6 +29,8 @@ def run(root: Path, *, now: datetime | None = None, send_mail: bool = True) -> P
         raise RuntimeError("No candidates collected; check source availability before publishing an empty report")
 
     client = GroqClient()
+    candidates = prefilter_candidates(candidates)
+    LOGGER.info("prefiltered_candidates=%d", len(candidates))
     ranked = rank_candidates(client, candidates)
     previous_keys = {
         key

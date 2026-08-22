@@ -2,7 +2,7 @@ import unittest
 from datetime import UTC, datetime
 from unittest.mock import patch
 
-from ai_weekly.analysis import select_events
+from ai_weekly.analysis import prefilter_candidates, select_events
 from ai_weekly.collectors import collect_html_page, deduplicate_candidates
 from ai_weekly.models import Candidate, RankedEvent
 from ai_weekly.render import render_markdown
@@ -38,6 +38,17 @@ class PipelinePartsTests(unittest.TestCase):
         events = [_event("old", 9.5), _event("new", 8.0), _event("minor", 3.0)]
         selected = select_events(events, {"old"})
         self.assertEqual([item.event_key for item in selected], ["new", "minor"])
+
+    def test_prefilter_preserves_source_diversity(self):
+        items = []
+        for source in ("A", "B", "C"):
+            for index in range(5):
+                item = _candidate(f"Agent model {source}-{index}", f"https://example.com/{source}/{index}")
+                item.source = source
+                items.append(item)
+        selected = prefilter_candidates(items, maximum=6, per_source=2)
+        self.assertEqual(len(selected), 6)
+        self.assertEqual({item.source for item in selected}, {"A", "B", "C"})
 
     def test_render_labels_fact_analysis_and_forecast(self):
         markdown = render_markdown(

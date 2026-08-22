@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections import Counter
 from typing import Any
 
 from .groq import GroqClient
@@ -18,11 +19,42 @@ REPORT_SYSTEM = """你是嚴謹的全球 AI 科技情報主編。只可使用提
 技術突破優先，其次是重大產品/商業/產業，再來才是工具。輸出必須是合法 JSON object，使用繁體中文。"""
 
 
-def rank_candidates(client: GroqClient, candidates: list[Candidate], batch_size: int = 20) -> list[RankedEvent]:
+IMPORTANT_KEYWORDS = (
+    "model", "reason", "agent", "coding", "multimodal", "training", "inference",
+    "benchmark", "research", "paper", "open source", "enterprise", "cloud", "chip",
+    "模型", "推理", "代理", "多模態", "訓練", "論文", "開源", "雲端", "晶片",
+)
+
+
+def prefilter_candidates(candidates: list[Candidate], maximum: int = 45, per_source: int = 6) -> list[Candidate]:
+    """Cheap, deterministic prefilter before spending scarce LLM tokens."""
+    def priority(item: Candidate) -> tuple[int, str]:
+        text = f"{item.title} {item.summary}".lower()
+        keyword_hits = sum(1 for keyword in IMPORTANT_KEYWORDS if keyword in text)
+        source_bonus = 3 if item.source_kind == "original_research" else 2 if item.source_kind == "official" else 0
+        return (10 - item.tier * 3 + source_bonus + min(keyword_hits, 5), item.published_at)
+
+    counts: Counter[str] = Counter()
+    selected: list[Candidate] = []
+    for item in sorted(candidates, key=priority, reverse=True):
+        if counts[item.source] >= per_source:
+            continue
+        selected.append(item)
+        counts[item.source] += 1
+        if len(selected) >= maximum:
+            break
+    return selected
+
+
+def rank_candidates(client: GroqClient, candidates: list[Candidate], batch_size: int = 10) -> list[RankedEvent]:
     ranked: list[RankedEvent] = []
     for start in range(0, len(candidates), batch_size):
         batch = candidates[start : start + batch_size]
-        payload = [dict(index=start + idx, **item.to_dict()) for idx, item in enumerate(batch)]
+        payload = []
+        for idx, item in enumerate(batch):
+            compact = item.to_dict()
+            compact["summary"] = compact["summary"][:500]
+            payload.append(dict(index=start + idx, **compact))
         prompt = f"""評估以下候選情報。對每項給 0～10 整數分數：
 technical_breakthrough, research_novelty, product_impact, practical_value,
 industry_impact, open_source_impact, future_potential, career_relevance, source_confidence。
@@ -33,7 +65,7 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
 
 候選資料：
 {json.dumps(payload, ensure_ascii=False)}"""
-        response = client.complete_json(system=RANK_SYSTEM, user=prompt, max_tokens=7000)
+        response = client.complete_json(system=RANK_SYSTEM, user=prompt, max_tokens=2500)
         for item in response.get("events", []):
             try:
                 index = int(item["index"])
@@ -60,7 +92,7 @@ event_key 請用能跨週穩定識別同一事件的簡短英文 slug；若無�
     return sorted(ranked, key=lambda event: event.total_score, reverse=True)
 
 
-def select_events(ranked: list[RankedEvent], previous_keys: set[str], minimum: int = 5, maximum: int = 10) -> list[RankedEvent]:
+def select_events(ranked: list[RankedEvent], previous_keys: set[str], minimum: int = 5, maximum: int = 8) -> list[RankedEvent]:
     fresh = [event for event in ranked if event.event_key not in previous_keys]
     thresholded = [event for event in fresh if event.total_score >= 6.0]
     count = min(maximum, max(minimum, len(thresholded)))
@@ -87,7 +119,7 @@ personal_actions、tools_to_try、methodology_note。
 本週事件：{json.dumps([event.to_dict() for event in events], ensure_ascii=False)}
 過去最多四週摘要：{json.dumps(history[-4:], ensure_ascii=False)}
 輸出格式為上述欄位組成的 JSON object。"""
-    response = client.complete_json(system=REPORT_SYSTEM, user=prompt, max_tokens=8000)
+    response = client.complete_json(system=REPORT_SYSTEM, user=prompt, max_tokens=4200)
     response["period_start"] = period_start
     response["period_end"] = period_end
     response["selected_events"] = [event.to_dict() for event in events]
@@ -120,4 +152,3 @@ def _weighted_score(scores: dict[str, int]) -> float:
     }
     denominator = sum(weights.values())
     return round(sum(scores.get(key, 0) * weight for key, weight in weights.items()) / denominator, 2)
-
