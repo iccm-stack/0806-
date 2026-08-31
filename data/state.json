@@ -19,6 +19,25 @@
       "one_line_summary": "本週 AI 加速與自動化技術突破顯著，從 LFM2.5‑DSpark 的 3.2 倍推論加速到多模型路由與遞迴自我改進基準，再到雲遷移與量子化學計算的實務應用。",
       "report": "reports/2026/2026-08-22.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-08-31",
+      "event_keys": [
+        "ce-moe-efficiency",
+        "nvidia-vera-cpu-shipping",
+        "nvlink-fusion-nvhbm",
+        "quantization-aware-healing",
+        "aws-sagemaker-ray-hyperpod",
+        "gemini-omni-1-1-flash"
+      ],
+      "trend_names": [
+        "通信效率化與模型訓練成本降低",
+        "AI 代理專用硬體與記憶體整合",
+        "模型壓縮與可控生成技術進展"
+      ],
+      "one_line_summary": "本週 AI 研發聚焦於降低大型 MoE 模型訓練通信成本、AI 代理專用硬體與記憶體創新、量化模型效能突破，以及分散式訓練平台與生成模型可控性提升。",
+      "report": "reports/2026/2026-08-31.md",
+      "email_sent": false
     }
   ]
 }
