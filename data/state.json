@@ -38,6 +38,25 @@
       "one_line_summary": "本週 AI 研發聚焦於降低大型 MoE 模型訓練通信成本、AI 代理專用硬體與記憶體創新、量化模型效能突破，以及分散式訓練平台與生成模型可控性提升。",
       "report": "reports/2026/2026-08-31.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-09-07",
+      "event_keys": [
+        "nvidia-cosmos-factory",
+        "neuro-symbolic-procedural",
+        "unimate-unified-animation",
+        "neuro-symbolic-visual-reasoning",
+        "llm-distill-recommendation",
+        "hybrid-gui-cli-agent"
+      ],
+      "trend_names": [
+        "實體 AI 模型工廠與大規模部署",
+        "神經符號長程推理",
+        "統一骨架動畫基礎模型"
+      ],
+      "one_line_summary": "本週 AI 基礎設施與神經符號推理領域出現多項技術突破，從 NVIDIA Cosmos 3 在 SageMaker 上的實體模型工廠到多篇結合視覺語言與符號推理的論文，顯示跨模態與大規模部署的持續進展。",
+      "report": "reports/2026/2026-09-07.md",
+      "email_sent": false
     }
   ]
 }
