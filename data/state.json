@@ -57,6 +57,25 @@
       "one_line_summary": "本週 AI 基礎設施與神經符號推理領域出現多項技術突破，從 NVIDIA Cosmos 3 在 SageMaker 上的實體模型工廠到多篇結合視覺語言與符號推理的論文，顯示跨模態與大規模部署的持續進展。",
       "report": "reports/2026/2026-09-07.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-09-14",
+      "event_keys": [
+        "robotaxi-full-stack",
+        "gpt-6-astra",
+        "ibm-granite-patchtst-fm2",
+        "agents-api",
+        "skild-ai-s1-physical-ai",
+        "chatgpt-work-data-agent"
+      ],
+      "trend_names": [
+        "實體 AI 商業化加速",
+        "多模態大模型持續突破",
+        "開源時間序列模型商業化"
+      ],
+      "one_line_summary": "本週 AI 產業聚焦於實體 AI 與自動駕駛全堆疊平台、下一代多模態大模型、開源時間序列預測模型與 AI 代理服務的快速落地。",
+      "report": "reports/2026/2026-09-14.md",
+      "email_sent": false
     }
   ]
 }
