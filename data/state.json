@@ -76,6 +76,25 @@
       "one_line_summary": "本週 AI 產業聚焦於實體 AI 與自動駕駛全堆疊平台、下一代多模態大模型、開源時間序列預測模型與 AI 代理服務的快速落地。",
       "report": "reports/2026/2026-09-14.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-09-21",
+      "event_keys": [
+        "google-agentic-security",
+        "eks-nvrx-distributed-training",
+        "nvidia-koa-crm",
+        "nvidia-open-source-cardiac-ai",
+        "anthropic-model-hardware-standard",
+        "gemini-3-8-live"
+      ],
+      "trend_names": [
+        "AI 代理安全與自動化",
+        "容錯分散式訓練技術成熟",
+        "企業級 AI 推理模型商業化"
+      ],
+      "one_line_summary": "本週 AI 產業聚焦於 AI 代理安全、容錯分散式訓練、企業級推理模型、醫療開源 AI 以及模型硬體標準化，顯示基礎技術與商業落地同步加速。",
+      "report": "reports/2026/2026-09-21.md",
+      "email_sent": false
     }
   ]
 }
