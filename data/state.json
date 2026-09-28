@@ -95,6 +95,25 @@
       "one_line_summary": "本週 AI 產業聚焦於 AI 代理安全、容錯分散式訓練、企業級推理模型、醫療開源 AI 以及模型硬體標準化，顯示基礎技術與商業落地同步加速。",
       "report": "reports/2026/2026-09-21.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-09-28",
+      "event_keys": [
+        "gemini-3-8-live-avatar",
+        "skyrl-sagemaker-hyperpod",
+        "gpt-6-sol-luna",
+        "openai-gpt6-astra",
+        "private-ai-compute-memory",
+        "ringg-gpt5-6-agents"
+      ],
+      "trend_names": [
+        "多模態生成即服務化",
+        "雲端強化學習基礎設施成熟",
+        "隱私計算技術突破"
+      ],
+      "one_line_summary": "本週 AI 產業聚焦於多模態生成、雲端 RL 基礎設施、OpenAI 大模型細分與隱私計算技術，同時出現高效能客服代理的商業化案例。",
+      "report": "reports/2026/2026-09-28.md",
+      "email_sent": false
     }
   ]
 }
