@@ -171,6 +171,25 @@
       "one_line_summary": "本週 AI 產業聚焦於大型多模態模型突破、機器人應用示範、開源高效能模型以及安全與代理工具的實用化，顯示技術深度與商業落地同步加速。",
       "report": "reports/2026/2026-10-19.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-10-26",
+      "event_keys": [
+        "nvidia-open-models-europe",
+        "nvidia-agent-toolkit-expansion",
+        "nvidia-cosmos-world-models",
+        "ibm-granite-ensemble-forecast",
+        "gemini-government-agent",
+        "multi-agent-prod-challenges"
+      ],
+      "trend_names": [
+        "開源模型多樣化與本地化部署",
+        "企業級 AI 代理平台功能擴充",
+        "通用 AI 代理在政府與公共服務的試點"
+      ],
+      "one_line_summary": "本週 AI 產業聚焦於開源大型模型與企業代理平台的快速擴展，特別是 NVIDIA 在歐洲主權智慧領域的多領域開源模型，以及 Google 在政府服務的通用 AI 代理人。",
+      "report": "reports/2026/2026-10-26.md",
+      "email_sent": false
     }
   ]
 }
