@@ -190,6 +190,25 @@
       "one_line_summary": "本週 AI 產業聚焦於開源大型模型與企業代理平台的快速擴展，特別是 NVIDIA 在歐洲主權智慧領域的多領域開源模型，以及 Google 在政府服務的通用 AI 代理人。",
       "report": "reports/2026/2026-10-26.md",
       "email_sent": false
+    },
+    {
+      "period_end": "2026-11-02",
+      "event_keys": [
+        "subquadratic-attention-hierarchical-indexer",
+        "exowatt-sagemaker",
+        "roboarchitect-automated-design",
+        "soci-indexed-sagemaker-images",
+        "ai-agent-monitoring",
+        "gemini-4-carbon"
+      ],
+      "trend_names": [
+        "次二次注意力與長上下文突破",
+        "雲端與邊緣 AI 成本效益優化",
+        "AI 代理安全與監控需求升高"
+      ],
+      "one_line_summary": "本週 AI 產業聚焦於次二次注意力突破、雲端與邊緣模型客製化、機器人代理自動化設計、SOCI 基礎設施優化與 AI 代理安全監控，同時迎來 DeepMind 新一代 Gemini 4 Carbon 模型。",
+      "report": "reports/2026/2026-11-02.md",
+      "email_sent": false
     }
   ]
 }
